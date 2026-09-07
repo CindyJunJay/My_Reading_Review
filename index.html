@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Story Atlas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+TC:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">✦</div><div><strong>Story Atlas</strong><span data-i18n="brandSub">角色關係筆記</span></div></div>
+      <div class="sidebar-heading"><span data-i18n="yourLibrary">你的書庫</span><button class="icon-button" id="addBookButton" title="Add book">+</button></div>
+      <div id="bookList" class="book-list"></div>
+      <div class="sidebar-footer"><button class="text-button" id="importButton">↥ <span data-i18n="import">匯入資料</span></button><button class="text-button" id="exportButton">↓ <span data-i18n="export">匯出資料</span></button><input id="fileInput" type="file" accept=".json,application/json" hidden></div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar"><div class="breadcrumbs"><span data-i18n="library">書庫</span><span>/</span><strong id="crumbTitle">霍格華茲：第一年</strong></div><div class="top-actions"><button class="language-toggle" id="languageToggle">EN <span>中</span></button><button class="avatar">C</button></div></header>
+      <section id="emptyState" class="empty-state hidden"><div class="empty-icon">✦</div><h1 data-i18n="emptyTitle">建立你的第一本書</h1><p data-i18n="emptyText">把人物、關係與關鍵事件整理成一張可以回來探索的地圖。</p><button class="primary-button" id="emptyAddButton" data-i18n="createBook">＋ 建立書籍</button></section>
+      <section id="bookView">
+        <div class="book-hero"><div class="book-hero-info"><div id="bookSummaryCover" class="book-summary-cover"><span class="book-cover-fallback">✦</span></div><div><div class="eyebrow" data-i18n="readingAtlas">READING ATLAS</div><h1 id="bookTitle">霍格華茲：第一年</h1><p id="bookMeta">J. K. Rowling <span>·</span> 奇幻 <span>·</span> 2024.03.18</p></div></div><button class="outline-button" id="editBookButton">✎ <span data-i18n="editDetails">編輯書籍資料</span></button></div>
+        <span id="bookStatus" class="status-badge"></span>
+        <nav class="tabs"><button class="tab active" data-tab="map" data-i18n="map">關係地圖</button><button class="tab" data-tab="events" data-i18n="events">關鍵事件</button><button class="tab" data-tab="notes" data-i18n="notes">閱讀筆記</button><button class="tab" data-tab="phrases" data-i18n="phrases">喜愛句子</button></nav>
+        <div id="mapPanel" class="panel-grid"><section class="map-card"><div class="panel-header"><div><h2 data-i18n="relationshipMap">人物關係圖</h2><p id="mapSummary">6 人物 · 7 關係</p></div><div class="map-tools"><button class="small-button" id="zoomOut">−</button><span id="zoomLevel">100%</span><button class="small-button" id="zoomIn">＋</button><button class="small-button" id="fitMapButton" data-i18n="fitMap">適合畫面</button><button class="small-button" id="addCharacterButton">＋ <span data-i18n="character">人物</span></button></div></div><div class="graph-wrap" id="graphWrap"><svg id="graphLines" aria-hidden="true"></svg><div id="graphNodes"></div><div class="graph-hint" data-i18n="dragHint">拖曳人物來整理地圖</div></div><div class="legend"><span><i class="dot red"></i><span data-i18n="family">家人</span></span><span><i class="dot blue"></i><span data-i18n="friendship">友誼</span></span><span><i class="dot gold"></i><span data-i18n="conflict">衝突</span></span><span><i class="dot green"></i><span data-i18n="mentor">師徒</span></span></div></section><aside class="detail-card" id="detailCard"><div class="detail-empty"><div class="detail-symbol">⌁</div><h3 data-i18n="selectCharacter">選擇一位人物</h3><p data-i18n="selectCharacterText">點擊地圖上的人物，查看他的故事與關係。</p></div></aside></div>
+        <div id="eventsPanel" class="content-panel hidden"><div class="content-panel-header"><div><h2 data-i18n="keyEvents">關鍵事件</h2><p data-i18n="eventsSubtitle">把故事的轉折點留在手邊。</p></div><button class="primary-button" id="addEventButton">＋ <span data-i18n="addEvent">新增事件</span></button></div><div id="eventList" class="event-list"></div></div>
+        <div id="notesPanel" class="content-panel hidden"><div class="content-panel-header"><div><h2 data-i18n="readingNotes">閱讀筆記</h2><p data-i18n="notesSubtitle">記下你想在下一次閱讀時找回的線索。</p></div><button class="primary-button" id="saveNotesButton" data-i18n="saveNotes">儲存筆記</button></div><textarea id="bookNotes" class="notes-editor" placeholder="寫下你的想法..."></textarea></div>
+        <div id="phrasesPanel" class="content-panel hidden"><div class="content-panel-header"><div><h2 data-i18n="favoritePhrases">喜愛句子</h2><p data-i18n="phrasesSubtitle">收藏讓你想停下來重讀的句子。</p></div><button class="primary-button" id="addPhraseButton">＋ <span data-i18n="addPhrase">新增句子</span></button></div><div id="phraseList" class="phrase-list"></div></div>
+      </section>
+    </main>
+  </div>
+  <div id="modalRoot"></div>
+  <script src="app.js"></script>
+</body>
+</html>
