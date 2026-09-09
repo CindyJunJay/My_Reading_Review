@@ -8,19 +8,45 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+TC:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <style>
+  .brand,#libraryNav{cursor:pointer}.brand:hover,#libraryNav:hover{color:var(--coral)}
+    .auth-gate{position:fixed;inset:0;z-index:20;background:var(--paper);display:grid;place-items:center;padding:24px}.auth-panel{width:min(100%,390px);background:var(--panel);padding:34px;box-shadow:var(--shadow);border:1px solid var(--line)}.auth-panel .brand-mark{margin-bottom:20px}.auth-panel h1{font-family:'Noto Serif TC',serif;margin:8px 0;font-size:28px}.auth-panel p{color:var(--muted);font-size:12px;line-height:1.6}.auth-label{display:block;font-size:11px;font-weight:700;margin:16px 0 6px}.auth-panel input{width:100%;border:1px solid var(--line);padding:11px 12px;border-radius:4px;background:#fff}.auth-submit{width:100%;margin-top:20px}.auth-switch{margin-top:18px;color:var(--blue);padding:0}.auth-status{min-height:20px;margin-bottom:0}.app-shell{display:none}.auth-gate.is-hidden{display:none}.app-shell.is-visible{display:flex}
+    .library-home{padding:42px 50px 60px;min-height:calc(100vh - 70px)}.library-home.hidden{display:none}.library-home-header{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:24px}.library-home h1{font-family:'Noto Serif TC',serif;font-size:34px;margin:6px 0}.library-home-subtitle{color:var(--muted);font-size:13px;margin:0}.library-filters{display:flex;gap:10px;flex-wrap:wrap}.library-filters select{border:1px solid var(--line);background:#fff;padding:10px 12px;border-radius:4px;color:var(--ink);font-size:12px}.bookshelf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}.shelf-book{background:var(--panel);border:1px solid var(--line);padding:10px;text-align:left;box-shadow:var(--shadow);transition:transform .18s ease,box-shadow .18s ease}.shelf-book:hover{transform:translateY(-3px);box-shadow:0 20px 44px rgba(40,35,28,.12)}.shelf-book-cover{height:150px;background:#bf6259;margin-bottom:10px;display:grid;place-items:center;color:#fff;background-size:cover;background-position:center}.shelf-book-cover span{font-size:24px}.shelf-book-title{font-family:'Noto Serif TC',serif;font-size:14px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.shelf-book-meta{color:var(--muted);font-size:10px;margin-top:5px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.shelf-book-status{display:inline-block;margin-top:9px;padding:3px 6px;border-radius:10px;background:#f3e7d7;color:#9a6b2d;font-size:9px;font-weight:700}.library-empty{color:var(--muted);padding:40px 0}.back-library{margin-right:auto}.book-detail-hidden{display:none!important}@media(max-width:650px){.library-home{padding:28px 16px 40px}.library-home-header{align-items:start;flex-direction:column}.library-home h1{font-size:28px}.bookshelf-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.shelf-book-cover{height:140px}}
+  </style>
 </head>
 <body>
+  <section id="authGate" class="auth-gate">
+    <div class="auth-panel">
+      <div class="brand-mark">✦</div>
+      <div class="eyebrow">STORY ATLAS</div>
+      <h1 id="authTitle">登入你的書庫</h1>
+      <p id="authMessage">使用帳戶在不同裝置之間保護你的閱讀資料。</p>
+      <form id="authForm">
+        <label class="auth-label" for="authEmail">Email</label>
+        <input id="authEmail" type="email" autocomplete="email" required>
+        <label class="auth-label" for="authPassword">Password</label>
+        <input id="authPassword" type="password" autocomplete="current-password" minlength="6" required>
+        <button class="primary-button auth-submit" id="authSubmit" type="submit">登入</button>
+      </form>
+      <button class="text-button auth-switch" id="authSwitch" type="button">建立新帳戶</button>
+      <p id="authStatus" class="auth-status" role="status"></p>
+    </div>
+  </section>
   <div class="app-shell">
     <aside class="sidebar">
-      <div class="brand"><div class="brand-mark">✦</div><div><strong>Story Atlas</strong><span data-i18n="brandSub">角色關係筆記</span></div></div>
+      <div class="brand" id="brandHome" role="button" tabindex="0" title="Back to bookshelf"><div class="brand-mark">✦</div><div><strong>Story Atlas</strong><span data-i18n="brandSub">角色關係筆記</span></div></div>
       <div class="sidebar-heading"><span data-i18n="yourLibrary">你的書庫</span><button class="icon-button" id="addBookButton" title="Add book">+</button></div>
       <div id="bookList" class="book-list"></div>
       <div class="sidebar-footer"><button class="text-button" id="importButton">↥ <span data-i18n="import">匯入資料</span></button><button class="text-button" id="exportButton">↓ <span data-i18n="export">匯出資料</span></button><input id="fileInput" type="file" accept=".json,application/json" hidden></div>
     </aside>
 
     <main class="main-content">
-      <header class="topbar"><div class="breadcrumbs"><span data-i18n="library">書庫</span><span>/</span><strong id="crumbTitle">霍格華茲：第一年</strong></div><div class="top-actions"><button class="language-toggle" id="languageToggle">EN <span>中</span></button><button class="avatar">C</button></div></header>
+      <header class="topbar"><div class="breadcrumbs"><span id="libraryNav" data-i18n="library">書庫</span><span>/</span><strong id="crumbTitle">霍格華茲：第一年</strong></div><div class="top-actions"><button class="language-toggle" id="languageToggle">EN <span>中</span></button><button class="avatar">C</button></div></header>
       <section id="emptyState" class="empty-state hidden"><div class="empty-icon">✦</div><h1 data-i18n="emptyTitle">建立你的第一本書</h1><p data-i18n="emptyText">把人物、關係與關鍵事件整理成一張可以回來探索的地圖。</p><button class="primary-button" id="emptyAddButton" data-i18n="createBook">＋ 建立書籍</button></section>
+      <section id="libraryHome" class="library-home">
+        <div class="library-home-header"><div><div class="eyebrow">YOUR BOOKSHELF</div><h1>我的書架</h1><p class="library-home-subtitle">最近加入的書會排在最前面。</p></div><div class="library-filters"><select id="genreFilter" aria-label="Filter by book type"><option value="">所有類型</option></select><select id="statusFilter" aria-label="Filter by reading status"><option value="">所有狀態</option><option value="reading">閱讀中</option><option value="finished">已讀完</option><option value="paused">暫停閱讀</option><option value="want">想讀</option></select></div></div>
+        <div id="bookshelfGrid" class="bookshelf-grid"></div>
+      </section>
       <section id="bookView">
         <div class="book-hero"><div class="book-hero-info"><div id="bookSummaryCover" class="book-summary-cover"><span class="book-cover-fallback">✦</span></div><div><div class="eyebrow" data-i18n="readingAtlas">READING ATLAS</div><h1 id="bookTitle">霍格華茲：第一年</h1><p id="bookMeta">J. K. Rowling <span>·</span> 奇幻 <span>·</span> 2024.03.18</p></div></div><button class="outline-button" id="editBookButton">✎ <span data-i18n="editDetails">編輯書籍資料</span></button></div>
         <span id="bookStatus" class="status-badge"></span>
@@ -33,6 +59,9 @@
     </main>
   </div>
   <div id="modalRoot"></div>
-  <script src="app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="app.js?storage=3"></script>
+  <script src="auth.js"></script>
 </body>
 </html>
