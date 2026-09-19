@@ -35,22 +35,30 @@ function statusText(status) {
 }
 
 function renderLibraryHome() {
+  const contentTypeFilter = document.querySelector('#contentTypeFilter');
   const genreFilter = document.querySelector('#genreFilter');
   const statusFilter = document.querySelector('#statusFilter');
   const grid = document.querySelector('#bookshelfGrid');
-  if (!genreFilter || !statusFilter || !grid) return;
+  if (!contentTypeFilter || !genreFilter || !statusFilter || !grid) return;
+  const selectedContentType = contentTypeFilter.value;
   const selectedGenre = genreFilter.value;
   const selectedStatus = statusFilter.value;
+  const contentTypes = [...new Set(books.map(book => book.contentType || 'book'))].sort();
+  contentTypeFilter.innerHTML = '<option value="">所有內容</option>' + contentTypes.map(type => { const definition = contentTypeDefinitions().find(item => item.id === type); return `<option value="${type}">${definition ? `${contentTypeIcon(definition)} ${contentTypeLabel(definition)}` : type}</option>`; }).join('');
+  contentTypeFilter.value = contentTypes.includes(selectedContentType) ? selectedContentType : '';
   const genres = [...new Set(books.map(book => book.genre).filter(Boolean))].sort();
   genreFilter.innerHTML = '<option value="">所有類型</option>' + genres.map(genre => `<option value="${genre}">${genre}</option>`).join('');
   genreFilter.value = genres.includes(selectedGenre) ? selectedGenre : '';
-  const filteredBooks = [...books].sort((a, b) => Number(b.id) - Number(a.id)).filter(book => (!genreFilter.value || book.genre === genreFilter.value) && (!selectedStatus || book.status === selectedStatus));
-  grid.innerHTML = filteredBooks.map(book => `<button class="shelf-book" type="button" data-shelf-book="${book.id}"><div class="shelf-book-cover" ${book.cover ? `style="background-image:url('${book.cover}')"` : ''}><span>${book.cover ? '' : '✦'}</span></div><strong class="shelf-book-title">${book.title}</strong><span class="shelf-book-meta">${book.author || 'Untitled'}${book.genre ? ` · ${book.genre}` : ''}</span><span class="shelf-book-status">${statusText(book.status)}</span></button>`).join('') || '<p class="library-empty">尚未找到符合條件的書籍。</p>';
+  const filteredBooks = [...books].sort((a, b) => Number(b.id) - Number(a.id)).filter(book => (!contentTypeFilter.value || (book.contentType || 'book') === contentTypeFilter.value) && (!genreFilter.value || book.genre === genreFilter.value) && (!selectedStatus || book.status === selectedStatus));
+  grid.innerHTML = filteredBooks.map(book => { const definition = contentTypeDefinitions().find(item => item.id === (book.contentType || 'book')); return `<button class="shelf-book" type="button" data-shelf-book="${book.id}"><div class="shelf-book-cover" ${book.cover ? `style="background-image:url('${book.cover}')"` : ''}><span>${book.cover ? '' : '✦'}</span></div><strong class="shelf-book-title">${book.title}</strong><span class="shelf-book-meta">${definition ? `${contentTypeIcon(definition)} ${contentTypeLabel(definition)}` : book.contentType || 'Book'}${book.author ? ` · ${book.author}` : ''}${book.genre ? ` · ${book.genre}` : ''}</span><span class="shelf-book-status">${statusText(book.status)}</span></button>`; }).join('') || '<p class="library-empty">尚未找到符合條件的內容。</p>';
+  if (typeof renderPeopleIndex === 'function') renderPeopleIndex();
 }
 
 function showLibraryHome() {
   document.querySelector('#libraryHome')?.classList.remove('hidden');
   document.querySelector('#bookView')?.classList.add('book-detail-hidden');
+  document.querySelector('#peopleIndex')?.classList.add('hidden');
+  document.querySelector('#bookshelfGrid')?.classList.remove('hidden');
   renderLibraryHome();
 }
 
@@ -74,6 +82,7 @@ document.querySelector('#brandHome')?.addEventListener('keydown', event => {
   if (event.key === 'Enter' || event.key === ' ') showLibraryHome();
 });
 document.querySelector('#genreFilter')?.addEventListener('change', renderLibraryHome);
+document.querySelector('#contentTypeFilter')?.addEventListener('change', renderLibraryHome);
 document.querySelector('#statusFilter')?.addEventListener('change', renderLibraryHome);
 
 function showAuth() {
